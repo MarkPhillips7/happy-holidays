@@ -80,6 +80,10 @@ export default class SnowScene {
     // To prevent cross-domain image errors: http://stackoverflow.com/questions/24087757/three-js-and-loading-a-cross-domain-image
     THREE.ImageUtils.crossOrigin = '';
 
+    this.waitingForBackgroundImage = true;
+    this.waitingForSnowflakeTexture = true;
+    this.rendered = false;
+
     this.canvasElement = document.getElementById('ThreeJS');
     this.scene = new THREE.Scene();
     this.camera = this.createCamera();
@@ -111,10 +115,61 @@ export default class SnowScene {
       this.scene.remove(this.flakes);
     }
 
-    const snowflakeImage = require('../../../static/snowflake.png');// this.assetpath('snowflake.png'));
-    this.snowflaketexture = THREE.ImageUtils.loadTexture(snowflakeImage);
-    this.snowflaketexture.minFilter = THREE.LinearFilter;
+    // const self = this;
+    //
+    // function snowflakeTextureLoaded(texture) {
+    //   // self.snowflaketexture.minFilter = THREE.LinearFilter;
+    //   // self.snowflaketexture.needsUpdate = true;
+    //
+    //   self.snowflaketexture = texture;
+    //   self.flakesGeometry = new THREE.BufferGeometry;
+    //
+    //   self.vertices = new Float32Array( Constants.totalFlakes * 3 ); // three components per vertex
+    //   self.actualYInCaseInvisible = new Float32Array( Constants.totalFlakes);
+    //   self.snowflakes = [];
+    //   // components of the position vector for each vertex are stored
+    //   // contiguously in the buffer.
+    //   for (let index = 0; index < Constants.totalFlakes; index++) {
+    //     const snowflake = new Snowflake();
+    //     self.snowflakes.push(snowflake);
+    //     self.vertices[ index * 3 + 0 ] = snowflake.state.modelPosition.x;
+    //     self.vertices[ index * 3 + 1 ] = snowflake.state.modelPosition.y;
+    //     self.vertices[ index * 3 + 2 ] = snowflake.state.modelPosition.z;
+    //     self.actualYInCaseInvisible[index] = snowflake.state.modelPosition.y;
+    //   }
+    //
+    //   // itemSize = 3 because there are 3 values (components) per vertex
+    //   self.flakesGeometry.addAttribute( 'position', new THREE.BufferAttribute( self.vertices, 3 ) );
+    //   self.flakesGeometry.addAttribute( 'actualYInCaseInvisible', new THREE.BufferAttribute( self.actualYInCaseInvisible, 1 ) );
+    //   self.flakeMaterial = new THREE.ParticleBasicMaterial({ map: self.snowflaketexture, transparent: true, size: 5 });
+    //   self.flakes = new THREE.Points(self.flakesGeometry, self.flakeMaterial);
+    //
+    //   self.scene.add( self.flakes );
+    //   self.waitingForSnowflakeTexture = false;
+    //   self.updateState(self.state, { type: 'SNOWFLAKE_GEOMETRY_READY' });
+    // }
 
+    const snowflakeImage = require('../../../static/snowflake.png');// this.assetpath('snowflake.png'));
+    this.waitingForSnowflakeTexture = true;
+    const loader = new THREE.TextureLoader();
+    // loader.crossOrigin = '';
+    loader.load(
+      snowflakeImage,
+      this.snowflakeTextureLoaded,
+      null,
+      this.errorLoadingTexture
+    );
+  }
+
+  errorLoadingTexture = (xhr) => {
+    console.log(`An error happened loading texture ${xhr}`);
+  }
+
+  snowflakeTextureLoaded = (texture) => {
+    // this.snowflaketexture.minFilter = THREE.LinearFilter;
+    // this.snowflaketexture.needsUpdate = true;
+
+    this.snowflaketexture = texture;
     this.flakesGeometry = new THREE.BufferGeometry;
 
     this.vertices = new Float32Array( Constants.totalFlakes * 3 ); // three components per vertex
@@ -138,6 +193,8 @@ export default class SnowScene {
     this.flakes = new THREE.Points(this.flakesGeometry, this.flakeMaterial);
 
     this.scene.add( this.flakes );
+    this.waitingForSnowflakeTexture = false;
+    this.updateState(this.state, { type: 'SNOWFLAKE_GEOMETRY_READY' });
   }
 
   createCamera = () => {
@@ -472,7 +529,41 @@ export default class SnowScene {
         backgroundImage = this.backgroundWinterGearSillyFaces;
         break;
     }
-    this.texture = THREE.ImageUtils.loadTexture(backgroundImage);
+    this.waitingForBackgroundImage = true;
+    // const self = this;
+    // function backgroundImageLoaded(texture) {
+    //   self.texture = texture;
+    //   self.backgroundMesh = new THREE.Mesh(
+    //     new THREE.PlaneGeometry(2, 2, 0),
+    //     new THREE.MeshBasicMaterial({
+    //       map: self.texture
+    //     })
+    //   );
+    //
+    //   self.backgroundMesh .material.depthTest = false;
+    //   self.backgroundMesh .material.depthWrite = false;
+    //
+    //   // Create the background scene
+    //   self.backgroundScene = new THREE.Scene();
+    //   self.backgroundCamera = new THREE.Camera();
+    //   self.backgroundScene .add(self.backgroundCamera );
+    //   self.backgroundScene .add(self.backgroundMesh );
+    //   self.waitingForBackgroundImage = false;
+    // }
+    const loader = new THREE.TextureLoader();
+    loader.crossOrigin = '';
+    loader.load(
+      backgroundImage,
+      this.backgroundImageLoaded,
+      null,
+      this.errorLoadingTexture
+    );
+
+    state.frameNumberOfLastBackgroundChange = state.frameNumber;
+  };
+
+  backgroundImageLoaded = (texture) => {
+    this.texture = texture;
     this.backgroundMesh = new THREE.Mesh(
       new THREE.PlaneGeometry(2, 2, 0),
       new THREE.MeshBasicMaterial({
@@ -488,9 +579,9 @@ export default class SnowScene {
     this.backgroundCamera = new THREE.Camera();
     this.backgroundScene .add(this.backgroundCamera );
     this.backgroundScene .add(this.backgroundMesh );
-
-    state.frameNumberOfLastBackgroundChange = state.frameNumber;
-  };
+    this.waitingForBackgroundImage = false;
+    this.updateState(this.state, { type: 'BACKGROUND_READY' });
+  }
 
   pause = () => {
     this.state = this.updateState(this.state, { type: 'TOGGLE_PLAY' });
@@ -595,20 +686,27 @@ export default class SnowScene {
         this.initializeSnowflakeData();
 
         state.outOfSnowflakes = false;
-        state.snowflakes = this.snowflakes;
         state.snowflakesPerSecond = Constants.initialSnowflakesPerSecond;
         state.frameNumber = 0;
         state.frameNumberOfLastBackgroundChange = 0;
         state.background = Backgrounds.none;
         state.updateMode = UpdateModes.automatic;
+        break;
+      case 'SNOWFLAKE_GEOMETRY_READY':
+        state.snowflakes = this.snowflakes;
         state.snowflakePositions = this.flakesGeometry.attributes.position;
         state.actualYInCaseInvisible = this.flakesGeometry.attributes.actualYInCaseInvisible;
         state.playing = true;
+        if (!this.rendered && !this.waitingForSnowflakeTexture && this.waitingForBackgroundImage) {
+          this.setBackground(state, Backgrounds.indoorGearSmiling);
+        }
+        break;
+      case 'BACKGROUND_READY':
+        if (!this.rendered && !this.waitingForSnowflakeTexture && !this.waitingForBackgroundImage) {
+          this.render();
+        }
         break;
       case 'ADVANCE_A_FRAME':
-
-        state.frameNumber ++;
-
         switch (state.background) {
           case Backgrounds.none:
             this.setBackground(state, Backgrounds.indoorGearSmiling);
@@ -672,62 +770,65 @@ export default class SnowScene {
             state.snowflakesPerSecond = Constants.defaultSnowflakesPerSecond;
             break;
         }
-        const snowflakesToAdd = state.snowflakesPerSecond / Constants.framesPerSecond;
+        if (!this.waitingForSnowflakeTexture && !this.waitingForBackgroundImage) {
+          state.frameNumber ++;
+          const snowflakesToAdd = state.snowflakesPerSecond / Constants.framesPerSecond;
 
-        // Freeze time momentarily while we anticipate a big snow dump
-        if (!state.outOfSnowflakes && state.background !== Backgrounds.winterGearAnticipatingSnowDump) {
-          let snowflakesAddedCounter = 0;
-          let verticesChanged = false;
-          const vertices = state.snowflakePositions.array;
-          const actualYInCaseInvisible = state.actualYInCaseInvisible.array;
-          for ( let index = 0; index < Constants.totalFlakes; index++ ) {
-            const roundedX = Math.round(vertices[ index * 3 + 0 ]);
-            const currentY = actualYInCaseInvisible[index];
-            const roundedY = Math.round(actualYInCaseInvisible[index]);
-            const roundedZ = Math.round(vertices[ index * 3 + 2 ]);
-            if (state.snowflakes[index].state.lifestage === SnowflakeLifestages.falling
-              || state.snowflakes[index].state.lifestage === SnowflakeLifestages.fallingFast
-            ) {
-              if (this.hasFallenOutOfView(roundedX, roundedY, roundedZ)) {
-                state.snowflakes[index].state.lifestage = SnowflakeLifestages.fallenOutOfView;
-                verticesChanged = true;
-                actualYInCaseInvisible[index] = Constants.topOfWreath;
-                vertices[ index * 3 + 1 ] = Constants.topOfWreath;
-              } else if (this.snowflakeCanFall(roundedX, roundedY, roundedZ)) {
-                const amountToFall = state.snowflakes[index].state.lifestage === SnowflakeLifestages.falling ? 0.6 : 2;
-                const newY = currentY - amountToFall;
-                verticesChanged = true;
-                actualYInCaseInvisible[index] = newY;
-                // snowflakeIsVisible is expensive so try minimize calls to it
-                if (roundedZ > Constants.daddyFaceToBackWall ||
-                  this.snowflakeIsVisible(roundedX, newY, roundedZ)
-                ) {
-                  vertices[ index * 3 + 1 ] = newY;
-                } else {
+          // Freeze time momentarily while we anticipate a big snow dump
+          if (!state.outOfSnowflakes && state.background !== Backgrounds.winterGearAnticipatingSnowDump) {
+            let snowflakesAddedCounter = 0;
+            let verticesChanged = false;
+            const vertices = state.snowflakePositions.array;
+            const actualYInCaseInvisible = state.actualYInCaseInvisible.array;
+            for ( let index = 0; index < Constants.totalFlakes; index++ ) {
+              const roundedX = Math.round(vertices[ index * 3 + 0 ]);
+              const currentY = actualYInCaseInvisible[index];
+              const roundedY = Math.round(actualYInCaseInvisible[index]);
+              const roundedZ = Math.round(vertices[ index * 3 + 2 ]);
+              if (state.snowflakes[index].state.lifestage === SnowflakeLifestages.falling
+                || state.snowflakes[index].state.lifestage === SnowflakeLifestages.fallingFast
+              ) {
+                if (this.hasFallenOutOfView(roundedX, roundedY, roundedZ)) {
+                  state.snowflakes[index].state.lifestage = SnowflakeLifestages.fallenOutOfView;
+                  verticesChanged = true;
+                  actualYInCaseInvisible[index] = Constants.topOfWreath;
                   vertices[ index * 3 + 1 ] = Constants.topOfWreath;
+                } else if (this.snowflakeCanFall(roundedX, roundedY, roundedZ)) {
+                  const amountToFall = state.snowflakes[index].state.lifestage === SnowflakeLifestages.falling ? 0.6 : 2;
+                  const newY = currentY - amountToFall;
+                  verticesChanged = true;
+                  actualYInCaseInvisible[index] = newY;
+                  // snowflakeIsVisible is expensive so try minimize calls to it
+                  if (roundedZ > Constants.daddyFaceToBackWall ||
+                    this.snowflakeIsVisible(roundedX, newY, roundedZ)
+                  ) {
+                    vertices[ index * 3 + 1 ] = newY;
+                  } else {
+                    vertices[ index * 3 + 1 ] = Constants.topOfWreath;
+                  }
+                } else {
+                  state.snowflakes[index].state.lifestage = SnowflakeLifestages.landed;
+                  this.updateSnowflakeLandingSpotsWithSnowflakeLanded(roundedX, roundedY, roundedZ);
                 }
-              } else {
-                state.snowflakes[index].state.lifestage = SnowflakeLifestages.landed;
-                this.updateSnowflakeLandingSpotsWithSnowflakeLanded(roundedX, roundedY, roundedZ);
+              } else if (
+                state.snowflakes[index].state.lifestage === SnowflakeLifestages.notYetInView
+                && snowflakesAddedCounter < snowflakesToAdd
+              ) {
+                state.snowflakes[index].state.lifestage = SnowflakeLifestages.falling;
+                snowflakesAddedCounter ++;
+                if (index === Constants.totalFlakes - 1) {
+                  state.outOfSnowflakes = true;
+                }
+              } else if (
+                state.snowflakes[index].state.lifestage === SnowflakeLifestages.landed
+                && actualYInCaseInvisible[index] > Constants.daddyFaceHeight
+                && this.snowflakeCanFall(roundedX, roundedY, roundedZ)
+              ) {
+                state.snowflakes[index].state.lifestage = SnowflakeLifestages.fallingFast;
               }
-            } else if (
-              state.snowflakes[index].state.lifestage === SnowflakeLifestages.notYetInView
-              && snowflakesAddedCounter < snowflakesToAdd
-            ) {
-              state.snowflakes[index].state.lifestage = SnowflakeLifestages.falling;
-              snowflakesAddedCounter ++;
-              if (index === Constants.totalFlakes - 1) {
-                state.outOfSnowflakes = true;
-              }
-            } else if (
-              state.snowflakes[index].state.lifestage === SnowflakeLifestages.landed
-              && actualYInCaseInvisible[index] > Constants.daddyFaceHeight
-              && this.snowflakeCanFall(roundedX, roundedY, roundedZ)
-            ) {
-              state.snowflakes[index].state.lifestage = SnowflakeLifestages.fallingFast;
             }
+            state.snowflakePositions.needsUpdate = verticesChanged;
           }
-          state.snowflakePositions.needsUpdate = verticesChanged;
         }
         break;
       default:
@@ -740,13 +841,18 @@ export default class SnowScene {
   render = () => {
     requestAnimationFrame( this.render );
 
-    if (this.state.playing) {
+    if (this.state.playing) { // && !this.waitingForSnowflakeTexture && !this.waitingForBackgroundImage) {
       this.updateState(this.state, { type: 'ADVANCE_A_FRAME' });
       this.renderer.autoClear = false;
       this.renderer.clear();
-      this.renderer.render(this.backgroundScene, this.backgroundCamera );
-      this.renderer.render(this.scene, this.camera);
+      if (this.backgroundCamera) {
+        this.renderer.render(this.backgroundScene, this.backgroundCamera );
+      }
+      if (this.camera) {
+        this.renderer.render(this.scene, this.camera);
+      }
     }
+    this.rendered = true;
   }
 
   static _instance = new SnowScene();
@@ -764,7 +870,7 @@ export default class SnowScene {
       this.canvasElement.appendChild( this.renderer.domElement );
     }
 
-    this.render();
+    // this.render();
 
     this.updateState(this.state, { type: 'MARK_INITIALIZED' });
   }
