@@ -45,6 +45,7 @@ export default class Html extends Component {
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
           <div className="container">
+            <h3 id='LoadingChristmasMagic' className="centered text-center"><i className="fa fa-spinner fa-spin"></i> Loading Christmas Magic...</h3>
             <div id='ThreeJS' className="centered text-center"></div>
           </div>
           <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())};`}} charSet="UTF-8"/>

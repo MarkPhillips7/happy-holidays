@@ -26,7 +26,8 @@ const Constants = {
   initialSnowflakesPerSecond: 0,
   defaultSnowflakesPerSecond: 400,
   heavySnowflakesPerSecond: 1000,
-  helpFigureOutWhereThingsAre: false
+  helpFigureOutWhereThingsAre: false,
+  backgroundImageCount: 8
 };
 
 const Backgrounds = {
@@ -100,56 +101,95 @@ export default class SnowScene {
   }
 
   setBackgroundImages = () => {
-    this.backgroundIndoorGearSmiling = require('../../../static/smiling1.png');
-    this.backgroundIndoorGearConfused = require('../../../static/confused1.png');
-    this.backgroundIndoorGearShivering = require('../../../static/shivering1.png');
-    this.backgroundIndoorGearShiveringWithUmbrella = require('../../../static/shiveringumbrella1.png');
-    this.backgroundWinterGearSmiling = require('../../../static/wintergearsmiling.png');
-    this.backgroundWinterGearWithUmbrella = require('../../../static/winterwearsmiling.png');
-    this.backgroundWinterGearAnticipatingSnowDump = require('../../../static/snowdump.png');
-    this.backgroundWinterGearSillyFaces = require('../../../static/winterwearsillyfaces.png');
+    this.backgroundMeshes = [];
+    this.backgroundImageLoadingIndex = 0;
+    const self = this;
+
+    const loadNextBackgroundImage = () => {
+      let backgroundImage;
+      switch (self.backgroundImageLoadingIndex) {
+        case Backgrounds.indoorGearSmiling:
+          backgroundImage = require('../../../static/smiling1.png');
+          break;
+        case Backgrounds.indoorGearConfused:
+          backgroundImage = require('../../../static/confused1.png');
+          break;
+        case Backgrounds.indoorGearShivering:
+          backgroundImage = require('../../../static/shivering1.png');
+          break;
+        case Backgrounds.indoorGearShiveringWithUmbrella:
+          backgroundImage = require('../../../static/shiveringumbrella1.png');
+          break;
+        case Backgrounds.winterGearSmiling:
+          backgroundImage = require('../../../static/wintergearsmiling.png');
+          break;
+        case Backgrounds.winterGearWithUmbrella:
+          backgroundImage = require('../../../static/winterwearsmiling.png');
+          break;
+        case Backgrounds.winterGearAnticipatingSnowDump:
+          backgroundImage = require('../../../static/snowdump.png');
+          break;
+        default: // Backgrounds.winterGearSillyFaces:
+          backgroundImage = require('../../../static/winterwearsillyfaces.png');
+          break;
+      }
+
+      const backgroundImageLoaded = (texture) => {
+        const backgroundMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(2, 2, 0),
+          new THREE.MeshBasicMaterial({
+            map: texture
+          })
+        );
+
+        backgroundMesh .material.depthTest = false;
+        backgroundMesh .material.depthWrite = false;
+
+        self.backgroundMeshes.push(backgroundMesh);
+
+        self.backgroundImageLoadingIndex ++;
+
+        if (self.backgroundImageLoadingIndex < Constants.backgroundImageCount) {
+          loadNextBackgroundImage();
+        } else {
+          self.waitingForBackgroundImage = false;
+          self.updateState(self.state, { type: 'BACKGROUND_READY' });
+        }
+      };
+
+      const loader = new THREE.TextureLoader();
+      loader.crossOrigin = '';
+      loader.load(
+        backgroundImage,
+        backgroundImageLoaded,
+        null,
+        self.errorLoadingTexture
+      );
+    };
+
+    loadNextBackgroundImage();
   }
+
+  setBackground = (state, newBackground) => {
+    if (this.backgroundMeshes && this.backgroundMeshes.length > newBackground) {
+      state.background = newBackground;
+
+      // Create the background scene
+      this.backgroundScene = new THREE.Scene();
+      this.backgroundCamera = new THREE.Camera();
+      this.backgroundScene.add(this.backgroundCamera );
+      this.backgroundScene.add(this.backgroundMeshes[newBackground] );
+
+      state.frameNumberOfLastBackgroundChange = state.frameNumber;
+    }
+  };
 
   initializeSnowflakeData = () => {
     if (this.flakes) {
       this.scene.remove(this.flakes);
     }
 
-    // const self = this;
-    //
-    // function snowflakeTextureLoaded(texture) {
-    //   // self.snowflaketexture.minFilter = THREE.LinearFilter;
-    //   // self.snowflaketexture.needsUpdate = true;
-    //
-    //   self.snowflaketexture = texture;
-    //   self.flakesGeometry = new THREE.BufferGeometry;
-    //
-    //   self.vertices = new Float32Array( Constants.totalFlakes * 3 ); // three components per vertex
-    //   self.actualYInCaseInvisible = new Float32Array( Constants.totalFlakes);
-    //   self.snowflakes = [];
-    //   // components of the position vector for each vertex are stored
-    //   // contiguously in the buffer.
-    //   for (let index = 0; index < Constants.totalFlakes; index++) {
-    //     const snowflake = new Snowflake();
-    //     self.snowflakes.push(snowflake);
-    //     self.vertices[ index * 3 + 0 ] = snowflake.state.modelPosition.x;
-    //     self.vertices[ index * 3 + 1 ] = snowflake.state.modelPosition.y;
-    //     self.vertices[ index * 3 + 2 ] = snowflake.state.modelPosition.z;
-    //     self.actualYInCaseInvisible[index] = snowflake.state.modelPosition.y;
-    //   }
-    //
-    //   // itemSize = 3 because there are 3 values (components) per vertex
-    //   self.flakesGeometry.addAttribute( 'position', new THREE.BufferAttribute( self.vertices, 3 ) );
-    //   self.flakesGeometry.addAttribute( 'actualYInCaseInvisible', new THREE.BufferAttribute( self.actualYInCaseInvisible, 1 ) );
-    //   self.flakeMaterial = new THREE.ParticleBasicMaterial({ map: self.snowflaketexture, transparent: true, size: 5 });
-    //   self.flakes = new THREE.Points(self.flakesGeometry, self.flakeMaterial);
-    //
-    //   self.scene.add( self.flakes );
-    //   self.waitingForSnowflakeTexture = false;
-    //   self.updateState(self.state, { type: 'SNOWFLAKE_GEOMETRY_READY' });
-    // }
-
-    const snowflakeImage = require('../../../static/snowflake.png');// this.assetpath('snowflake.png'));
+    const snowflakeImage = require('../../../static/snowflake.png');
     this.waitingForSnowflakeTexture = true;
     const loader = new THREE.TextureLoader();
     // loader.crossOrigin = '';
@@ -499,90 +539,6 @@ export default class SnowScene {
 
   assetpath = (filename) => { return '../../../static/' + filename; };
 
-  setBackground = (state, newBackground) => {
-    state.background = newBackground;
-
-    let backgroundImage;
-    switch (state.background) {
-      case Backgrounds.indoorGearSmiling:
-        backgroundImage = this.backgroundIndoorGearSmiling;
-        break;
-      case Backgrounds.indoorGearConfused:
-        backgroundImage = this.backgroundIndoorGearConfused;
-        break;
-      case Backgrounds.indoorGearShivering:
-        backgroundImage = this.backgroundIndoorGearShivering;
-        break;
-      case Backgrounds.indoorGearShiveringWithUmbrella:
-        backgroundImage = this.backgroundIndoorGearShiveringWithUmbrella;
-        break;
-      case Backgrounds.winterGearSmiling:
-        backgroundImage = this.backgroundWinterGearSmiling;
-        break;
-      case Backgrounds.winterGearWithUmbrella:
-        backgroundImage = this.backgroundWinterGearWithUmbrella;
-        break;
-      case Backgrounds.winterGearAnticipatingSnowDump:
-        backgroundImage = this.backgroundWinterGearAnticipatingSnowDump;
-        break;
-      default: // Backgrounds.winterGearSillyFaces:
-        backgroundImage = this.backgroundWinterGearSillyFaces;
-        break;
-    }
-    this.waitingForBackgroundImage = true;
-    // const self = this;
-    // function backgroundImageLoaded(texture) {
-    //   self.texture = texture;
-    //   self.backgroundMesh = new THREE.Mesh(
-    //     new THREE.PlaneGeometry(2, 2, 0),
-    //     new THREE.MeshBasicMaterial({
-    //       map: self.texture
-    //     })
-    //   );
-    //
-    //   self.backgroundMesh .material.depthTest = false;
-    //   self.backgroundMesh .material.depthWrite = false;
-    //
-    //   // Create the background scene
-    //   self.backgroundScene = new THREE.Scene();
-    //   self.backgroundCamera = new THREE.Camera();
-    //   self.backgroundScene .add(self.backgroundCamera );
-    //   self.backgroundScene .add(self.backgroundMesh );
-    //   self.waitingForBackgroundImage = false;
-    // }
-    const loader = new THREE.TextureLoader();
-    loader.crossOrigin = '';
-    loader.load(
-      backgroundImage,
-      this.backgroundImageLoaded,
-      null,
-      this.errorLoadingTexture
-    );
-
-    state.frameNumberOfLastBackgroundChange = state.frameNumber;
-  };
-
-  backgroundImageLoaded = (texture) => {
-    this.texture = texture;
-    this.backgroundMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(2, 2, 0),
-      new THREE.MeshBasicMaterial({
-        map: this.texture
-      })
-    );
-
-    this.backgroundMesh .material.depthTest = false;
-    this.backgroundMesh .material.depthWrite = false;
-
-    // Create the background scene
-    this.backgroundScene = new THREE.Scene();
-    this.backgroundCamera = new THREE.Camera();
-    this.backgroundScene .add(this.backgroundCamera );
-    this.backgroundScene .add(this.backgroundMesh );
-    this.waitingForBackgroundImage = false;
-    this.updateState(this.state, { type: 'BACKGROUND_READY' });
-  }
-
   pause = () => {
     this.state = this.updateState(this.state, { type: 'TOGGLE_PLAY' });
   }
@@ -697,12 +653,15 @@ export default class SnowScene {
         state.snowflakePositions = this.flakesGeometry.attributes.position;
         state.actualYInCaseInvisible = this.flakesGeometry.attributes.actualYInCaseInvisible;
         state.playing = true;
-        if (!this.rendered && !this.waitingForSnowflakeTexture && this.waitingForBackgroundImage) {
-          this.setBackground(state, Backgrounds.indoorGearSmiling);
-        }
+
         break;
       case 'BACKGROUND_READY':
-        if (!this.rendered && !this.waitingForSnowflakeTexture && !this.waitingForBackgroundImage) {
+        if (!this.rendered && !this.waitingForSnowflakeTexture) {
+          const loadingChristmasMagicElement = document.getElementById('LoadingChristmasMagic');
+          if (loadingChristmasMagicElement) {
+            loadingChristmasMagicElement.hidden = true;
+          }
+          this.setBackground(state, Backgrounds.indoorGearSmiling);
           this.render();
         }
         break;
@@ -841,16 +800,12 @@ export default class SnowScene {
   render = () => {
     requestAnimationFrame( this.render );
 
-    if (this.state.playing) { // && !this.waitingForSnowflakeTexture && !this.waitingForBackgroundImage) {
+    if (this.state.playing) {
       this.updateState(this.state, { type: 'ADVANCE_A_FRAME' });
       this.renderer.autoClear = false;
       this.renderer.clear();
-      if (this.backgroundCamera) {
-        this.renderer.render(this.backgroundScene, this.backgroundCamera );
-      }
-      if (this.camera) {
-        this.renderer.render(this.scene, this.camera);
-      }
+      this.renderer.render(this.backgroundScene, this.backgroundCamera );
+      this.renderer.render(this.scene, this.camera);
     }
     this.rendered = true;
   }
@@ -869,8 +824,6 @@ export default class SnowScene {
     if (this.canvasElement.children.length === 0) {
       this.canvasElement.appendChild( this.renderer.domElement );
     }
-
-    // this.render();
 
     this.updateState(this.state, { type: 'MARK_INITIALIZED' });
   }
