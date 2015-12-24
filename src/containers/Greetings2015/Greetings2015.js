@@ -40,7 +40,7 @@ export default class Greetings2015 extends Component {
     return (
       <div className="container">
         <h1 style={{textAlign: 'center', margin: 15}}>Happy Holidays from the Phillips Family</h1>
-        <DocumentMeta title={config.app.title + ': Happy Holidays from the Phillips Family'}/>
+        <DocumentMeta title={config.app.title + ''}/>
 
         <div style={{textAlign: 'center', margin: 15}}>
           <button className="btn btn-primary" onClick={this.pause}>
