@@ -15,24 +15,16 @@ module.exports = Object.assign({
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   app: {
-    title: 'React Redux Example',
+    title: 'Happy Holidays from the Phillips Family',
     description: 'All the modern best practices in one example.',
     meta: {
       charSet: 'utf-8',
       property: {
-        'og:site_name': 'React Redux Example',
+        'og:site_name': 'Happy Holidays from the Phillips Family',
         'og:image': 'https://react-redux.herokuapp.com/logo.jpg',
         'og:locale': 'en_US',
-        'og:title': 'React Redux Example',
-        'og:description': 'All the modern best practices in one example.',
-        'twitter:card': 'summary',
-        'twitter:site': '@erikras',
-        'twitter:creator': '@erikras',
-        'twitter:title': 'React Redux Example',
-        'twitter:description': 'All the modern best practices in one example.',
-        'twitter:image': 'https://react-redux.herokuapp.com/logo.jpg',
-        'twitter:image:width': '200',
-        'twitter:image:height': '200'
+        'og:title': 'Happy Holidays from the Phillips Family',
+        'og:description': 'All the best holiday wishes in one app.'
       }
     }
   }

@@ -4,12 +4,12 @@ import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import {
     App,
     Chat,
-    Home,
+    // Home,
     Widgets,
     About,
     Login,
     LoginSuccess,
-    Survey,
+    Greetings2015,
     NotFound,
   } from 'containers';
 
@@ -37,7 +37,7 @@ export default (store) => {
   return (
     <Route path="/" component={App}>
       { /* Home (main) route */ }
-      <IndexRoute component={Home}/>
+      <IndexRoute component={Greetings2015}/>
 
       { /* Routes requiring login */ }
       <Route onEnter={requireLogin}>
@@ -48,7 +48,7 @@ export default (store) => {
       { /* Routes */ }
       <Route path="about" component={About}/>
       <Route path="login" component={Login}/>
-      <Route path="survey" component={Survey}/>
+      <Route path="2015" component={Greetings2015}/>
       <Route path="widgets" component={Widgets}/>
 
       { /* Catch all route */ }
