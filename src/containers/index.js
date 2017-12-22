@@ -6,4 +6,5 @@ export About from './About/About';
 export Login from './Login/Login';
 export LoginSuccess from './LoginSuccess/LoginSuccess';
 export Greetings2015 from './Greetings2015/Greetings2015';
+export Greetings2017 from './Greetings2017/Greetings2017';
 export NotFound from './NotFound/NotFound';

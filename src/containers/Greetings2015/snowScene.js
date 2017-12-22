@@ -109,28 +109,28 @@ export default class SnowScene {
       let backgroundImage;
       switch (self.backgroundImageLoadingIndex) {
         case Backgrounds.indoorGearSmiling:
-          backgroundImage = require('../../../static/smiling1.png');
+          backgroundImage = require('../../../static/smiling1.jpg');
           break;
         case Backgrounds.indoorGearConfused:
-          backgroundImage = require('../../../static/confused1.png');
+          backgroundImage = require('../../../static/confused1.jpg');
           break;
         case Backgrounds.indoorGearShivering:
-          backgroundImage = require('../../../static/shivering1.png');
+          backgroundImage = require('../../../static/shivering1.jpg');
           break;
         case Backgrounds.indoorGearShiveringWithUmbrella:
-          backgroundImage = require('../../../static/shiveringumbrella1.png');
+          backgroundImage = require('../../../static/shiveringumbrella1.jpg');
           break;
         case Backgrounds.winterGearSmiling:
-          backgroundImage = require('../../../static/wintergearsmiling.png');
+          backgroundImage = require('../../../static/wintergearsmiling.jpg');
           break;
         case Backgrounds.winterGearWithUmbrella:
-          backgroundImage = require('../../../static/winterwearsmiling.png');
+          backgroundImage = require('../../../static/winterwearsmiling.jpg');
           break;
         case Backgrounds.winterGearAnticipatingSnowDump:
-          backgroundImage = require('../../../static/snowdump.png');
+          backgroundImage = require('../../../static/snowdump.jpg');
           break;
         default: // Backgrounds.winterGearSillyFaces:
-          backgroundImage = require('../../../static/winterwearsillyfaces.png');
+          backgroundImage = require('../../../static/winterwearsillyfaces.jpg');
           break;
       }
 
@@ -634,6 +634,16 @@ export default class SnowScene {
     switch (action.type) {
       case 'MARK_INITIALIZED':
         state.initialized = true;
+        // Added this now that snow scene gets removed and then reinitialized
+        if (this.rendered) {
+          const loadingChristmasMagicElement = document.getElementById('LoadingChristmasMagic');
+          if (loadingChristmasMagicElement) {
+            loadingChristmasMagicElement.hidden = true;
+          }
+        }
+        break;
+      case 'REMOVED':
+        state.initialized = false;
         break;
       case 'TOGGLE_PLAY':
         state.playing = !state.playing;
@@ -814,6 +824,17 @@ export default class SnowScene {
 
   static getInstance() {
     return SnowScene._instance;
+  }
+
+  remove = () => {
+    if (this.canvasElement &&
+      this.canvasElement.children.length > 0 &&
+      this.renderer &&
+      this.renderer.domElement) {
+      this.canvasElement.removeChild( this.renderer.domElement );
+    }
+    this.updateState(this.state, { type: 'REMOVED' });
+    this.updateState(this.state, { type: 'PLAY_FROM_BEGINNING' });
   }
 
   initialize = () => {

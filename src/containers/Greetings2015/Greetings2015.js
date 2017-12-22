@@ -1,28 +1,21 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, {Component} from 'react';
+// import {connect} from 'react-redux';
 import DocumentMeta from 'react-document-meta';
-import {initialize} from 'redux-form';
 import config from '../../config';
 // had to move the SnowScene reference to componentDidMount
 // import SnowScene from './snowScene';
 
-@connect(
-  () => ({}),
-  {initialize})
 export default class Greetings2015 extends Component {
-  static propTypes = {
-    initialize: PropTypes.func.isRequired
-  }
-
   componentDidMount() {
     const SnowScene = require( './snowScene' );
     const snowScene = SnowScene.getInstance();
     snowScene.initialize();
   }
 
-  handleSubmit = (data) => {
-    window.alert('Data submitted! ' + JSON.stringify(data));
-    this.props.initialize('survey', {});
+  componentWillUnmount() {
+    const SnowScene = require( './snowScene' );
+    const snowScene = SnowScene.getInstance();
+    snowScene.remove();
   }
 
   pause = () => {
@@ -50,6 +43,8 @@ export default class Greetings2015 extends Component {
             <i className="fa fa-refresh"/> Replay
           </button>
         </div>
+
+        <h3 id="LoadingChristmasMagic" className="centered text-center"><i className="fa fa-spinner fa-spin"></i> Loading Christmas Magic...</h3>
       </div>
     );
   }

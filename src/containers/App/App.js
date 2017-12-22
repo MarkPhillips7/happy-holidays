@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-// import { IndexLink } from 'react-router';
-// import { LinkContainer } from 'react-router-bootstrap';
-// import { Navbar, Nav, NavItem, CollapsibleNav } from 'react-bootstrap';
+import { IndexLink } from 'react-router';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Navbar, NavBrand, Nav, NavItem, CollapsibleNav } from 'react-bootstrap';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
@@ -53,12 +53,37 @@ export default class App extends Component {
   }
 
   render() {
-    // const {user} = this.props;
+    const {user} = this.props;
     const styles = require('./App.scss');
     return (
       <div className={styles.app}>
         <DocumentMeta {...config.app}/>
+        <Navbar fixedTop toggleNavKey={0}>
+            <NavBrand>
+              <IndexLink to="/" activeStyle={{color: '#33e0ff'}}>
+                <div className={styles.brand}/>
+                <span>{config.app.title}</span>
+              </IndexLink>
+            </NavBrand>
 
+            <CollapsibleNav eventKey={0}>
+              <Nav navbar>
+                <LinkContainer to="/2017">
+                  <NavItem eventKey={2}>2017</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/2015">
+                  <NavItem eventKey={3}>2015</NavItem>
+                </LinkContainer>
+              </Nav>
+              {user &&
+              <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
+              {false && <Nav navbar right>
+                <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/erikras/react-redux-universal-hot-example">
+                  <i className="fa fa-github"/>
+                </NavItem>
+              </Nav>}
+            </CollapsibleNav>
+          </Navbar>
         <div className={styles.appContent}>
           {this.props.children}
         </div>

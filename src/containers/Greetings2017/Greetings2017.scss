@@ -1,0 +1,39 @@
+.container {
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 800px;
+  padding: 120px 80px 0px 80px;
+  background: url(https://s-media-cache-ak0.pinimg.com/originals/b1/84/b1/b184b1dc343f692bbc9be76668cf91cc.png);
+  // background: url(https://gallery.yopriceville.com/var/resizes/Holidays-Frames/Transparent_Christmas_PNG_Border_Frame.png?m=1448884170);
+  // background: url(https://s-media-cache-ak0.pinimg.com/originals/ff/a9/67/ffa9673bfa05f5b0f482d8faf0248da1.jpg);
+  // background: url(https://gallery.yopriceville.com/var/albums/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243504) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  // background-image: url(https://gallery.yopriceville.com/var/resizes/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243506);
+  // background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfNV9rLXQurS-cP5c6__v94DUPL_1rxCW_wqN-FNT1iQWxtg-BQ);
+}
+.greeting {
+  margin-bottom: 25px;
+}
+.preQuiz {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+.preQuizForm {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  margin: 20px;
+}
+.introButton {
+  margin-bottom: 10px;
+}
+.quizIntroduction {
+  font-size: large;
+  margin-bottom: 20px;
+}

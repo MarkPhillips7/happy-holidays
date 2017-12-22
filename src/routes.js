@@ -10,6 +10,7 @@ import {
     Login,
     LoginSuccess,
     Greetings2015,
+    Greetings2017,
     NotFound,
   } from 'containers';
 
@@ -49,6 +50,7 @@ export default (store) => {
       <Route path="about" component={About}/>
       <Route path="login" component={Login}/>
       <Route path="2015" component={Greetings2015}/>
+      <Route path="2017" component={Greetings2017}/>
       <Route path="widgets" component={Widgets}/>
 
       { /* Catch all route */ }
