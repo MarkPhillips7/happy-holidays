@@ -23,6 +23,11 @@ export default function reducer(state = initialState, action = {}) {
         initialized: true,
         quizData: action.quizData,
       };
+    case MOVE_ON_TO_NEXT_QUESTION:
+      return {
+        ...state,
+        currentQuestionIndex: state.currentQuestionIndex + 1,
+      };
     case PROCESS_GUESS:
       const answeredCorrectly = state.quizData.questions[state.currentQuestionIndex].correctAnswer === action.guess;
       const allQuestionsGuesses = [...state.allQuestionsGuesses];

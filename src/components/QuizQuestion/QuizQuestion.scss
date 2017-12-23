@@ -1,7 +1,13 @@
+.quizQuestionWithEverything {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
 .quizQuestion {
   font-size: large;
   display: flex;
   flex-flow: row wrap;
+  align-items: flex-end;
 }
 .quizQuestionLeftRight {
   width: 300px;
@@ -10,6 +16,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 500px;
 }
 .questionIntroduction {
   font-size: large;
@@ -26,14 +33,23 @@
 }
 .answer {
   align-items: center;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
 }
 .iconRadioButton {
   margin-right: 10px;
 }
+.rightWrongDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .rightWrong {
-  max-height: 100px;
+  max-height: 110px;
+}
+.successImage {
+  margin: 10px;
 }
 .wrong {
   text-decoration: line-through;
