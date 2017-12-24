@@ -66,67 +66,75 @@ export default class Greetings2017 extends Component {
     const wrongGuessUrl = quizData.picturesWhenGuessedIncorrectly && quizData.picturesWhenGuessedIncorrectly[incorrectImageIndex];
     return (
         <div className={`${styles.container} container-fluid`}>
-          {false && <h1 className={styles.greeting}>Happy Holidays!</h1>}
-          {!quizStarted &&
-            <div className={styles.preQuiz}>
-              <img src={phillipsFamilyImage}/>
-              <div className={styles.preQuizForm}>
-                <p className={styles.quizIntroduction}>{quizData.introduction}</p>
-                <button
-                  className={`${styles.introButton} btn btn-success`}
-                  onClick={startQuiz}
-                >
-                  Bring it on!
-                </button>
-                <button
-                  className={`${styles.introButton} btn btn-danger`}
-                  onClick={showPictures}
-                >
-                  Bah Humbug! Just show me some pictures
-                </button>
-              </div>
+          <div className={`${styles.topBorder}`}/>
+          <div className={`${styles.leftToRight}`}>
+            <div className={`${styles.leftBorder}`}/>
+            <div className={`${styles.middle}`}>
+              {!quizStarted &&
+                <div className={styles.preQuiz}>
+                  <img src={phillipsFamilyImage}/>
+                  <div className={styles.preQuizForm}>
+                    <p className={styles.quizIntroduction}>{quizData.introduction}</p>
+                    <button
+                      className={`${styles.introButton} btn btn-success`}
+                      onClick={startQuiz}
+                    >
+                      Bring it on!
+                    </button>
+                    <button
+                      className={`${styles.introButton} btn btn-danger`}
+                      onClick={showPictures}
+                    >
+                      Bah Humbug! Just show me some pictures
+                    </button>
+                  </div>
+                </div>
+              }
+              {quizStarted && !shouldDisplayQuizResults &&
+                <QuizQuestion
+                  isAnotherQuestion={isAnotherQuestion}
+                  question={currentQuestion}
+                  questionNumber={questionNumber}
+                  guesses={currentQuestionGuesses}
+                  onGuess={processGuess}
+                  onNextQuestion={moveOnToNextQuestion}
+                  onShowResults={showQuizResults}
+                  successPictures={currentQuestion.picturesWhenCorrect}
+                  wrongGuessUrl={wrongGuessUrl}
+                />
+              }
+              {shouldDisplayQuizResults &&
+                <QuizResults
+                  allQuestionsGuesses={allQuestionsGuesses}
+                  quizData={quizData}
+                />
+              }
+              {shouldDisplayAllPictures &&
+                <div className={styles.successPictures}>
+                  {_.map(this.getAllSuccessPictures(), (picture, index) => {
+                    const successImageSource = picture;
+                    if (typeof successImageSource === 'object') {
+                      return (
+                        <iframe className={styles.successImage}
+                          width={successImageSource.width}
+                          height={successImageSource.height}
+                          src={successImageSource.src}
+                          frameBorder="0" gesture="media" allow="encrypted-media" allowFullScreen>
+                        </iframe>
+                      );
+                    }
+                    return (
+                      <img key={index} className={styles.successImage} src={successImageSource}/>
+                    );
+                  })}
+                </div>
+              }
+              {shouldDisplayAllPictures && <h2>Merry Christmas and Happy New Year!</h2>}
+              {shouldDisplayAllPictures && <h3>Much love from Mark, Jen, Lily, Willow and Dinah</h3>}
             </div>
-          }
-          {quizStarted && !shouldDisplayQuizResults &&
-            <QuizQuestion
-              isAnotherQuestion={isAnotherQuestion}
-              question={currentQuestion}
-              questionNumber={questionNumber}
-              guesses={currentQuestionGuesses}
-              onGuess={processGuess}
-              onNextQuestion={moveOnToNextQuestion}
-              onShowResults={showQuizResults}
-              successPictures={currentQuestion.picturesWhenCorrect}
-              wrongGuessUrl={wrongGuessUrl}
-            />
-          }
-          {shouldDisplayQuizResults &&
-            <QuizResults
-              allQuestionsGuesses={allQuestionsGuesses}
-              quizData={quizData}
-            />
-          }
-          {shouldDisplayAllPictures &&
-            <div className={styles.successPictures}>
-              {_.map(this.getAllSuccessPictures(), (picture, index) => {
-                const successImageSource = picture;
-                if (typeof successImageSource === 'object') {
-                  return (
-                    <iframe className={styles.successImage}
-                      width={successImageSource.width}
-                      height={successImageSource.height}
-                      src={successImageSource.src}
-                      frameBorder="0" gesture="media" allow="encrypted-media" allowFullScreen>
-                    </iframe>
-                  );
-                }
-                return (
-                  <img key={index} className={styles.successImage} src={successImageSource}/>
-                );
-              })}
-              <h2>Merry Christmas and Happy New Year!</h2>
-            </div>
-          }
+            <div className={`${styles.rightBorder}`}/>
+          </div>
+          <div className={`${styles.bottomBorder}`}/>
         </div>
     );
   }

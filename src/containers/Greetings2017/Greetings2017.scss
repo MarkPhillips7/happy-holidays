@@ -3,26 +3,72 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 800px;
-  padding: 150px 120px 0px 120px;
-  background: url(https://s-media-cache-ak0.pinimg.com/originals/b1/84/b1/b184b1dc343f692bbc9be76668cf91cc.png);
-  // background: url(https://gallery.yopriceville.com/var/resizes/Holidays-Frames/Transparent_Christmas_PNG_Border_Frame.png?m=1448884170);
-  // background: url(https://s-media-cache-ak0.pinimg.com/originals/ff/a9/67/ffa9673bfa05f5b0f482d8faf0248da1.jpg);
-  // background: url(https://gallery.yopriceville.com/var/albums/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243504) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  // background-image: url(https://gallery.yopriceville.com/var/resizes/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243506);
-  // background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfNV9rLXQurS-cP5c6__v94DUPL_1rxCW_wqN-FNT1iQWxtg-BQ);
+  // min-height: 800px;
+  // padding: 150px 120px 0px 120px;
+  // background: url(https://s-media-cache-ak0.pinimg.com/originals/b1/84/b1/b184b1dc343f692bbc9be76668cf91cc.png);
+  // // background: url(https://gallery.yopriceville.com/var/resizes/Holidays-Frames/Transparent_Christmas_PNG_Border_Frame.png?m=1448884170);
+  // // background: url(https://s-media-cache-ak0.pinimg.com/originals/ff/a9/67/ffa9673bfa05f5b0f482d8faf0248da1.jpg);
+  // // background: url(https://gallery.yopriceville.com/var/albums/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243504) no-repeat center center fixed;
+  // -webkit-background-size: cover;
+  // -moz-background-size: cover;
+  // -o-background-size: cover;
+  // background-size: cover;
+  // // background-image: url(https://gallery.yopriceville.com/var/resizes/Backgrounds/Christmas_Background_with_Snowflake_and_Christmas_Balls.jpg?m=1446243506);
+  // // background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmfNV9rLXQurS-cP5c6__v94DUPL_1rxCW_wqN-FNT1iQWxtg-BQ);
+}
+.leftToRight {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+}
+.middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 100px);
+}
+.topBorder {
+  margin: 10px 0px 10px 0px;
+  background-image: url(../../../static/ornaments-left-to-right4.jpg);
+  background-repeat: repeat-x;
+  background-size: 112px 44px;
+  width: 93%;
+  height: 50px;
+}
+.leftBorder {
+  margin: 0px 0px 0px 0px;
+  background-image: url(../../../static/ornaments-bottom-to-top.jpg);
+  background-repeat: repeat-y;
+  background-size: 44px 112px;
+  width: 50px;
+}
+.rightBorder {
+  margin: 0px 0px 0px 0px;
+  background-image: url(../../../static/ornaments-top-to-bottom.jpg);
+  background-repeat: repeat-y;
+  background-size: 44px 112px;
+  width: 50px;
+}
+.bottomBorder {
+  margin: 10px 30px 10px 30px;
+  background-image: url(../../../static/ornaments-right-to-left.jpg);
+  background-repeat: repeat-x;
+  background-size: 112px 44px;
+  width: 93%;
+  height: 50px;
 }
 .greeting {
   margin-bottom: 25px;
 }
 .preQuiz {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row;
+  justify-content: center;
   align-items: center;
+  width: 100%;
 }
 .preQuizForm {
   display: flex;

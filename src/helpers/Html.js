@@ -24,7 +24,7 @@ export default class Html extends Component {
     const content = component ? ReactDOM.renderToString(component) : '';
 
     return (
-      <html lang="en-us">
+      <html lang="en-us" style={{ height: '100%' }}>
         <head>
           {DocumentMeta.renderAsReact()}
 

@@ -7,7 +7,7 @@ const quizData = {
         'Florida in February',
         'Florida in April',
         'Florida in November',
-        'North Carolina in August and November',
+        'North Carolina in August, September and November',
       ],
       correctAnswers: ['Florida in February'],
       picturesWhenCorrect: [
@@ -15,8 +15,8 @@ const quizData = {
         require(`../../../static/lily-willow-hugging-beach-medium.jpg`),
         require(`../../../static/florida mommy lily willow.jpg`),
         require(`../../../static/florida-lily-alligator.jpg`),
+        require(`../../../static/willow timmy and lily on horses.jpg`),
         require(`../../../static/lily-willow-disney-medium.jpg`),
-        require(`../../../static/epcot-infront of ball with every one and tinkerbell.jpg`),
         require(`../../../static/wilmington-everybody-medium.jpg`),
       ]
     }, {
@@ -72,6 +72,7 @@ const quizData = {
         require(`../../../static/lily-sit at swimmeet.jpg`),
         require(`../../../static/lily-swim backstroke.jpg`),
         require(`../../../static/willow-swim-smile.jpg`),
+        require(`../../../static/willow-swimming.jpg`),
       ]
     }, {
       question: `Which of these were actual lyrics to the final Disney World handshake?`,
@@ -84,7 +85,9 @@ const quizData = {
       correctAnswers: ['Everyone is awesome!'],
       picturesWhenCorrect: [
         {width: 903, height: 508, src: 'https://www.youtube.com/embed/g_QrMdMCSkw'},
+        require(`../../../static/epcot-infront of ball with every one and tinkerbell.jpg`),
         require(`../../../static/magic kingdom-familycastle.jpg`),
+        require(`../../../static/epcot-long nosed creature with family.jpg`),
       ]
     }, {
       question: 'Which halloween costume was actually worn this year?',
@@ -96,6 +99,7 @@ const quizData = {
       ],
       correctAnswers: ['Willow as a peacock'],
       picturesWhenCorrect: [
+        require(`../../../static/willow-peacock.jpg`),
         require(`../../../static/lily-jillian-willow-halloween.jpg`),
       ]
     }, {
@@ -117,6 +121,7 @@ const quizData = {
     },
   ],
   picturesWhenGuessedIncorrectly: [
+    'http://clipground.com/images/try-again-clipart-2.jpg',
     require(`../../../static/willow-thing-wrapped-around-head.jpg`),
     'http://vignette3.wikia.nocookie.net/lotrminecraftmod/images/e/e1/Never_Give_Up_Never_Surrender.png/revision/latest?cb=20150427205746',
     require(`../../../static/lily-angry-witch.jpg`),

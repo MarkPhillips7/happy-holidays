@@ -32,6 +32,7 @@ export default class QuizQuestion extends Component {
         <h3>{score} % - {results.comment}</h3>
         <br/>
         <h2>Merry Christmas and Happy New Year!</h2>
+        <h3>Much love from Mark, Jen, Lily, Willow and Dinah</h3>
       </div>
     );
   }
