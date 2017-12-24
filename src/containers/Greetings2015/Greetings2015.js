@@ -32,7 +32,7 @@ export default class Greetings2015 extends Component {
   render() {
     return (
       <div className="container">
-        <h1 style={{textAlign: 'center', margin: 15}}>Happy Holidays</h1>
+        <h1 style={{textAlign: 'center', margin: 15}}>Happy Holidays from the Phillips Family</h1>
         <DocumentMeta title={config.app.title + ''}/>
 
         <div style={{textAlign: 'center', margin: 15}}>

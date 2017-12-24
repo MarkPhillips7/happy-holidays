@@ -15,15 +15,15 @@ module.exports = Object.assign({
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   app: {
-    title: 'Happy Holidays from the Phillips Family',
+    title: 'Happy Holidays',
     description: 'All the modern best practices in one example.',
     meta: {
       charSet: 'utf-8',
       property: {
-        'og:site_name': 'Happy Holidays from the Phillips Family',
+        'og:site_name': 'Happy Holidays',
         'og:image': 'https://react-redux.herokuapp.com/logo.jpg',
         'og:locale': 'en_US',
-        'og:title': 'Happy Holidays from the Phillips Family',
+        'og:title': 'Happy Holidays',
         'og:description': 'All the best holiday wishes in one app.'
       }
     }
