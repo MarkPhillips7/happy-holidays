@@ -85,9 +85,9 @@ const quizData = {
       correctAnswers: ['Everyone is awesome!'],
       picturesWhenCorrect: [
         {width: 903, height: 508, src: 'https://www.youtube.com/embed/g_QrMdMCSkw'},
-        require(`../../../static/epcot-infront of ball with every one and tinkerbell.jpg`),
-        require(`../../../static/magic kingdom-familycastle.jpg`),
-        require(`../../../static/epcot-long nosed creature with family.jpg`),
+        require(`../../../static/epcot in front of ball with every one and tinkerbell.jpg`),
+        require(`../../../static/magic kingdom family castle.jpg`),
+        require(`../../../static/epcot long nosed creature with family.jpg`),
       ]
     }, {
       question: 'Which halloween costume was actually worn this year?',
