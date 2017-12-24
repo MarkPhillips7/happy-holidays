@@ -1,13 +1,9 @@
 import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
 import {_} from 'underscore';
-import {theWordWrongSource, theWordRightSource} from '../../helpers/images';
+import {theWordWrongSource, theWordRightSource, theWordsSoFarSoGood,
+  theWordFinally, thatsMoreLikeIt, whatAreYouDoing} from '../../helpers/images';
+import {wasEntireQuestionAnsweredCorrectly} from '../../helpers/quiz';
 
-@connect(
-  state => ({
-    quiz: state.quiz,
-  }),
-  undefined)
 export default class QuizQuestion extends Component {
   static propTypes = {
     guesses: PropTypes.array,
@@ -17,7 +13,54 @@ export default class QuizQuestion extends Component {
     questionNumber: PropTypes.number,
     onGuess: PropTypes.func,
     onNextQuestion: PropTypes.func,
+    onShowResults: PropTypes.func,
     successPictures: PropTypes.array,
+  }
+
+  // True as long as all correct answers have been guessed, even if wrong answers were guessed as well.
+  wereAllCorrectAnswersSelected() {
+    const {
+      guesses,
+      question,
+    } = this.props;
+    return guesses &&
+      question &&
+      question.correctAnswers &&
+      _.every(question.correctAnswers, (correctAnswer) => _.contains(guesses, correctAnswer));
+  }
+
+  // True only if all correct answers were guessed before guessing any wrong answers.
+  wasEntireQuestionAnsweredCorrectly() {
+    const {
+      guesses,
+      question,
+    } = this.props;
+    return wasEntireQuestionAnsweredCorrectly(question, guesses);
+  }
+
+  wasQuestionOnlyPartiallyAnsweredCorrectly() {
+    const {
+      guesses,
+      question,
+    } = this.props;
+    return guesses &&
+      question &&
+      question.correctAnswers &&
+      guesses.length > 0 &&
+      guesses.length < question.correctAnswers.length &&
+      _.every(guesses, (guess) => _.contains(question.correctAnswers, guess));
+  }
+
+  wasMostRecentGuessCorrect() {
+    const {
+      guesses,
+      question,
+    } = this.props;
+    return guesses &&
+      question &&
+      question.correctAnswers &&
+      guesses.length > 0 &&
+      _.contains(question.correctAnswers, guesses[guesses.length - 1]);
   }
 
   render() {
@@ -28,17 +71,56 @@ export default class QuizQuestion extends Component {
       questionNumber,
       onGuess,
       onNextQuestion,
+      onShowResults,
       successPictures,
       wrongGuessUrl,
     } = this.props;
+    const mostRecentGuessStatuses = {
+      noGuessesYet: 1,
+      partiallyAnswered: 2,
+      perfect: 3,
+      mostRecentGuessWrongButOverallRight: 4,
+      mostRecentGuessRightButOnlyPartialAnswer: 5,
+      mostRecentGuessRightButOverallWrong: 6,
+      wrong: 7,
+    };
     const styles = require('./QuizQuestion.scss');
-    const mostRecentGuessIsCorrect = guesses && guesses.length &&
-      guesses[guesses.length - 1] === question.correctAnswer;
-    const showSuccessImage = mostRecentGuessIsCorrect;
-    const showWrongImage = guesses && guesses.length && !mostRecentGuessIsCorrect;
-    const successImage = require('../../containers/About/kitten.jpg');
-    const showSuccessPictures = _.contains(guesses, question.correctAnswer);
-    const showNextButton = showSuccessPictures && isAnotherQuestion;
+    const mostRecentGuessWasCorrect = this.wasMostRecentGuessCorrect();
+    const entireQuestionAnsweredCorrectly = this.wasEntireQuestionAnsweredCorrectly();
+    const questionUnlocked = this.wereAllCorrectAnswersSelected();
+    let mostRecentGuessStatus;
+    if (entireQuestionAnsweredCorrectly) {
+      if (mostRecentGuessWasCorrect) {
+        mostRecentGuessStatus = mostRecentGuessStatuses.perfect;
+      } else {
+        mostRecentGuessStatus = mostRecentGuessStatuses.mostRecentGuessWrongButOverallRight;
+      }
+    } else {
+      if (this.wasQuestionOnlyPartiallyAnsweredCorrectly()) {
+        mostRecentGuessStatus = mostRecentGuessStatuses.partiallyAnswered;
+      } else {
+        if (questionUnlocked) {
+          if (mostRecentGuessWasCorrect) {
+            mostRecentGuessStatus = mostRecentGuessStatuses.mostRecentGuessRightButOverallWrong;
+          } else {
+            mostRecentGuessStatus = mostRecentGuessStatuses.wrong;
+          }
+        } else {
+          if (guesses && guesses.length > 0) {
+            if (mostRecentGuessWasCorrect) {
+              mostRecentGuessStatus = mostRecentGuessStatuses.mostRecentGuessRightButOnlyPartialAnswer;
+            } else {
+              mostRecentGuessStatus = mostRecentGuessStatuses.wrong;
+            }
+          } else {
+            mostRecentGuessStatus = mostRecentGuessStatuses.noGuessesYet;
+          }
+        }
+      }
+    }
+    const successImage = require('../../../static/dinah-wink.jpg');
+    const showNextButton = questionUnlocked && isAnotherQuestion;
+    const showQuizFinishedButton = questionUnlocked && !isAnotherQuestion;
     return (
       <div className={styles.quizQuestionWithEverything}>
         <div className={styles.quizQuestion}>
@@ -53,7 +135,7 @@ export default class QuizQuestion extends Component {
               <div className={styles.answers}>
                 {_.map(question.answers, (answer, index) => {
                   const answerGuessed = guesses && _.contains(guesses, answer);
-                  const isCorrectAnswer = answer === question.correctAnswer;
+                  const isCorrectAnswer = _.contains(question.correctAnswers, answer);
                   let correctWrong = '';
                   if (answerGuessed) {
                     correctWrong = isCorrectAnswer ? ` ${styles.correct}` : ` ${styles.wrong}`;
@@ -89,13 +171,33 @@ export default class QuizQuestion extends Component {
             }
           </div>
           <div className={styles.quizQuestionLeftRight}>
-            {showSuccessImage &&
+            {mostRecentGuessStatus === mostRecentGuessStatuses.partiallyAnswered &&
+              <div className={styles.rightWrongDiv}>
+                <img className={styles.rightWrong} src={theWordsSoFarSoGood}/>
+              </div>
+            }
+            {mostRecentGuessStatus === mostRecentGuessStatuses.mostRecentGuessRightButOnlyPartialAnswer &&
+              <div className={styles.rightWrongDiv}>
+                <img className={styles.rightWrong} src={thatsMoreLikeIt}/>
+              </div>
+            }
+            {mostRecentGuessStatus === mostRecentGuessStatuses.mostRecentGuessRightButOverallWrong &&
+              <div className={styles.rightWrongDiv}>
+                <img className={styles.rightWrong} src={theWordFinally}/>
+              </div>
+            }
+            {mostRecentGuessStatus === mostRecentGuessStatuses.perfect &&
               <div className={styles.rightWrongDiv}>
                 <img className={styles.rightWrong} src={theWordRightSource}/>
                 <img className={styles.rightWrong} src={successImage}/>
               </div>
             }
-            {showWrongImage &&
+            {mostRecentGuessStatus === mostRecentGuessStatuses.mostRecentGuessWrongButOverallRight &&
+              <div className={styles.rightWrongDiv}>
+                <img className={styles.rightWrong} src={whatAreYouDoing}/>
+              </div>
+            }
+            {mostRecentGuessStatus === mostRecentGuessStatuses.wrong &&
               <div className={styles.rightWrongDiv}>
                 <img className={styles.rightWrong} src={theWordWrongSource}/>
                 <img className={styles.rightWrong} src={wrongGuessUrl}/>
@@ -103,7 +205,7 @@ export default class QuizQuestion extends Component {
             }
           </div>
         </div>
-        {showSuccessPictures &&
+        {questionUnlocked &&
           <div className={styles.successPictures}>
             {_.map(successPictures, (picture, index) => {
               const successImageSource = picture;
@@ -129,6 +231,14 @@ export default class QuizQuestion extends Component {
             onClick={onNextQuestion}
           >
             Next Question Please
+          </button>
+        }
+        {showQuizFinishedButton &&
+          <button
+            className={`${styles.nextButton} btn btn-success`}
+            onClick={onShowResults}
+          >
+            All Finished, Go to Results!
           </button>
         }
       </div>

@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import { QuizQuestion } from 'components';
+import { QuizQuestion, QuizResults } from 'components';
 import * as quizActions from 'redux/modules/quiz';
 import * as quizData2017 from './quizData';
+import {_} from 'underscore';
 
 @connect(
   state => ({
@@ -15,12 +16,28 @@ export default class Greetings2017 extends Component {
     initializeQuizData: PropTypes.func.isRequired,
     moveOnToNextQuestion: PropTypes.func.isRequired,
     processGuess: PropTypes.func.isRequired,
+    shouldDisplayAllPictures: PropTypes.bool,
     showPictures: PropTypes.func.isRequired,
     startQuiz: PropTypes.func.isRequired,
+    showQuizResults: PropTypes.func.isRequired,
   }
 
   componentWillMount() {
     this.props.initializeQuizData(quizData2017);
+  }
+
+  getAllSuccessPictures() {
+    const {
+      quiz: {
+        quizData,
+      },
+    } = this.props;
+    return _.reduce(quizData ? quizData.questions : [], (pictureArray, question) => {
+      return [
+        ...pictureArray,
+        ...question.picturesWhenCorrect,
+      ];
+    }, []);
   }
 
   render() {
@@ -28,12 +45,16 @@ export default class Greetings2017 extends Component {
       moveOnToNextQuestion,
       processGuess,
       quiz: {
-        currentQuestionIndex,
         allQuestionsGuesses,
+        currentQuestionIndex,
+        incorrectImageIndex,
         quizData,
         quizStarted,
+        shouldDisplayAllPictures,
+        shouldDisplayQuizResults,
       },
-      // showPictures,
+      showPictures,
+      showQuizResults,
       startQuiz,
     } = this.props;
     const phillipsFamilyImage = require('../../../static/phillips-family-2017-large.jpg');
@@ -42,7 +63,7 @@ export default class Greetings2017 extends Component {
     const currentQuestion = typeof currentQuestionIndex === 'number' && quizData.questions[currentQuestionIndex] || {};
     const currentQuestionGuesses = allQuestionsGuesses[currentQuestionIndex];
     const isAnotherQuestion = quizData.questions && currentQuestionIndex < quizData.questions.length - 1;
-    const wrongGuessUrl = quizData.picturesWhenGuessedIncorrectly && quizData.picturesWhenGuessedIncorrectly[currentQuestionIndex];
+    const wrongGuessUrl = quizData.picturesWhenGuessedIncorrectly && quizData.picturesWhenGuessedIncorrectly[incorrectImageIndex];
     return (
         <div className={`${styles.container} container-fluid`}>
           {false && <h1 className={styles.greeting}>Happy Holidays!</h1>}
@@ -57,18 +78,16 @@ export default class Greetings2017 extends Component {
                 >
                   Bring it on!
                 </button>
-                <a href="https://www.facebook.com/mark.phillips.1485/videos/10212951064504087/">
-                  <button
-                    className={`${styles.introButton} btn btn-danger`}
-                    // onClick={showPictures}
-                  >
-                    Bah Humbug! Just show me some pictures
-                  </button>
-                </a>
+                <button
+                  className={`${styles.introButton} btn btn-danger`}
+                  onClick={showPictures}
+                >
+                  Bah Humbug! Just show me some pictures
+                </button>
               </div>
             </div>
           }
-          {quizStarted &&
+          {quizStarted && !shouldDisplayQuizResults &&
             <QuizQuestion
               isAnotherQuestion={isAnotherQuestion}
               question={currentQuestion}
@@ -76,9 +95,37 @@ export default class Greetings2017 extends Component {
               guesses={currentQuestionGuesses}
               onGuess={processGuess}
               onNextQuestion={moveOnToNextQuestion}
+              onShowResults={showQuizResults}
               successPictures={currentQuestion.picturesWhenCorrect}
               wrongGuessUrl={wrongGuessUrl}
             />
+          }
+          {shouldDisplayQuizResults &&
+            <QuizResults
+              allQuestionsGuesses={allQuestionsGuesses}
+              quizData={quizData}
+            />
+          }
+          {shouldDisplayAllPictures &&
+            <div className={styles.successPictures}>
+              {_.map(this.getAllSuccessPictures(), (picture, index) => {
+                const successImageSource = picture;
+                if (typeof successImageSource === 'object') {
+                  return (
+                    <iframe className={styles.successImage}
+                      width={successImageSource.width}
+                      height={successImageSource.height}
+                      src={successImageSource.src}
+                      frameBorder="0" gesture="media" allow="encrypted-media" allowFullScreen>
+                    </iframe>
+                  );
+                }
+                return (
+                  <img key={index} className={styles.successImage} src={successImageSource}/>
+                );
+              })}
+              <h2>Merry Christmas and Happy New Year!</h2>
+            </div>
           }
         </div>
     );
