@@ -42,7 +42,7 @@ const quizData = {
       ],
       correctAnswers: ['Willow got a bed'],
       picturesWhenCorrect: [
-        {width: 975, height: 508, src: 'https://www.youtube.com/embed/a23h8u8mB7I'},
+        {width: 285, height: 508, src: 'https://www.youtube.com/embed/a23h8u8mB7I'},
       ]
     }, {
       question: `In the May ballet showing what animal was willow?`,

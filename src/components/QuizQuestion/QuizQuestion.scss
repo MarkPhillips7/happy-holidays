@@ -10,13 +10,13 @@
   align-items: flex-end;
 }
 .quizQuestionLeftRight {
-  width: 400px;
+  width: 370px;
 }
 .quizQuestionMiddle {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 500px;
+  width: 380px;
 }
 .questionIntroduction {
   font-size: large;
@@ -46,7 +46,7 @@
   align-items: center;
 }
 .rightWrong {
-  max-height: 150px;
+  max-height: 130px;
 }
 // .successPictures {
 //   display: flex;
