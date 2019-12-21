@@ -12,5 +12,7 @@ export Greetings2012 from './Greetings2012/Greetings2012';
 export Greetings2014 from './Greetings2014/Greetings2014';
 export Greetings2015 from './Greetings2015/Greetings2015';
 export Greetings2017 from './Greetings2017/Greetings2017';
+export Greetings2019 from './Greetings2019/Greetings2019';
+export GreetingsQuiz from './GreetingsQuiz/GreetingsQuiz';
 export GreetingsEmbeddedDoc from './GreetingsEmbeddedDoc/GreetingsEmbeddedDoc';
 export NotFound from './NotFound/NotFound';

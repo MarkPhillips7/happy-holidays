@@ -68,6 +68,9 @@ export default class App extends Component {
 
             <CollapsibleNav eventKey={0}>
               <Nav navbar>
+                <LinkContainer to="/2019">
+                  <NavItem eventKey={1}>2019</NavItem>
+                </LinkContainer>
                 <LinkContainer to="/2017">
                   <NavItem eventKey={2}>2017</NavItem>
                 </LinkContainer>
@@ -92,11 +95,6 @@ export default class App extends Component {
               </Nav>
               {user &&
               <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
-              {false && <Nav navbar right>
-                <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/erikras/react-redux-universal-hot-example">
-                  <i className="fa fa-github"/>
-                </NavItem>
-              </Nav>}
             </CollapsibleNav>
           </Navbar>
         <div className={styles.appContent}>

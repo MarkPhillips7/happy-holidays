@@ -2,7 +2,7 @@ const quizData = {
   introduction: `Put away your books and get out that number 2 pencil because it's time for the Phillips family 2017 pop quiz!`,
   questions: [
     {
-      question: 'In 2017 the Phillipses did NOT travel to',
+      question: 'In 2019 the Phillipses did NOT travel to',
       answers: [
         'Florida in February',
         'Florida in April',

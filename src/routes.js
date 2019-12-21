@@ -16,6 +16,7 @@ import {
     Greetings2014,
     Greetings2015,
     Greetings2017,
+    Greetings2019,
     NotFound,
   } from 'containers';
 
@@ -43,7 +44,7 @@ export default (store) => {
   return (
     <Route path="/" component={App}>
       { /* Home (main) route */ }
-      <IndexRoute component={Greetings2017}/>
+      <IndexRoute component={Greetings2019}/>
 
       { /* Routes requiring login */ }
       <Route onEnter={requireLogin}>
@@ -61,6 +62,7 @@ export default (store) => {
       <Route path="2014" component={Greetings2014}/>
       <Route path="2015" component={Greetings2015}/>
       <Route path="2017" component={Greetings2017}/>
+      <Route path="2019" component={Greetings2019}/>
       <Route path="widgets" component={Widgets}/>
 
       { /* Catch all route */ }
