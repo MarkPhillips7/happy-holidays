@@ -74,6 +74,21 @@ export default class App extends Component {
                 <LinkContainer to="/2015">
                   <NavItem eventKey={3}>2015</NavItem>
                 </LinkContainer>
+                <LinkContainer to="/2014">
+                  <NavItem eventKey={4}>2014</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/2012">
+                  <NavItem eventKey={5}>2012</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/2011">
+                  <NavItem eventKey={6}>2011</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/2009">
+                  <NavItem eventKey={7}>2009</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/2008">
+                  <NavItem eventKey={7}>2008</NavItem>
+                </LinkContainer>
               </Nav>
               {user &&
               <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}

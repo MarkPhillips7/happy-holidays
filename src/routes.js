@@ -9,6 +9,11 @@ import {
     About,
     Login,
     LoginSuccess,
+    Greetings2008,
+    Greetings2009,
+    Greetings2011,
+    Greetings2012,
+    Greetings2014,
     Greetings2015,
     Greetings2017,
     NotFound,
@@ -49,6 +54,11 @@ export default (store) => {
       { /* Routes */ }
       <Route path="about" component={About}/>
       <Route path="login" component={Login}/>
+      <Route path="2008" component={Greetings2008}/>
+      <Route path="2009" component={Greetings2009}/>
+      <Route path="2011" component={Greetings2011}/>
+      <Route path="2012" component={Greetings2012}/>
+      <Route path="2014" component={Greetings2014}/>
       <Route path="2015" component={Greetings2015}/>
       <Route path="2017" component={Greetings2017}/>
       <Route path="widgets" component={Widgets}/>
