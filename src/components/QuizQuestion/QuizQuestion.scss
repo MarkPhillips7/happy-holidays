@@ -48,12 +48,21 @@
 .rightWrong {
   max-height: 130px;
 }
-// .successPictures {
-//   display: flex;
-//   flex-flow: row wrap;
-//   width: 100%;
-// }
+.successPictures {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
 .successImage {
+  margin: 10px;
+  max-width:600px;
+  max-height:600px;
+  width:auto;
+  height:auto;
+}
+.successIFrame {
   margin: 10px;
 }
 .wrong {

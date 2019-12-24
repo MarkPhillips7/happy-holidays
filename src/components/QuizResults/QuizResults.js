@@ -25,7 +25,7 @@ export default class QuizQuestion extends Component {
       return runningTotal + wasEntireQuestionAnsweredCorrectly(quizData.questions[index], guesses);
     }, 0);
     const results = resultsByHowManyCorrect[totalCorrectResponses] || {};
-    const score = questions && totalCorrectResponses * 100 / questions.length;
+    const score = questions && Math.round(totalCorrectResponses * 100 / questions.length);
     return (
       <div className={styles.quizResults}>
         <h2>Quiz Results</h2>

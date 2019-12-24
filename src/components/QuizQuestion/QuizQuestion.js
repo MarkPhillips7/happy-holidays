@@ -211,16 +211,27 @@ export default class QuizQuestion extends Component {
               const successImageSource = picture;
               if (typeof successImageSource === 'object') {
                 return (
-                  <iframe className={styles.successImage}
+                  <iframe
+                    key={index}
+                    className={styles.successIFrame}
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                     width={successImageSource.width}
                     height={successImageSource.height}
                     src={successImageSource.src}
-                    frameBorder="0" gesture="media" allow="encrypted-media" allowFullScreen>
+                    frameBorder="0"
+                    gesture="media">
                   </iframe>
                 );
               }
               return (
-                <img key={index} className={styles.successImage} src={successImageSource}/>
+                <img
+                  key={index}
+                  maxWidth={successImageSource.width}
+                  maxHeight={successImageSource.height}
+                  className={styles.successImage}
+                  src={successImageSource}
+                />
               );
             })}
           </div>
