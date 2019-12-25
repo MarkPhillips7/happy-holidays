@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 
 export default class Greetings2008 extends Component {
   render() {
-    const src = require(`../../../static/Phillips Christmas Letter 2008.pdf`);
+    const src = require(`../../../static/Phillips Christmas letter 2008.pdf`);
     return (
       <div>
         <embed
